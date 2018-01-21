@@ -1,21 +1,30 @@
-import Bus from '../src/i2c/Bus';
+// @flow
+import { I2cBus as Bus } from 'i2c-bus-promised';
 import BMP280 from '../src/BMP280';
 
+const formatValue = (value: number, decimals: number = 2): string => {
+  const factor = 10 ** decimals;
+
+  const formatted = Math.trunc(value * factor) / factor;
+
+  return formatted.toString();
+};
+
 const bus = new Bus();
-bus.i2cFuncs().then((funcs) => {
-  console.info('i2c functions:');
-  Object.entries(funcs).forEach(([name, cmd]) => {
-    console.info(`\t${name} --> 0x${cmd.toString(16)}`);
-  });
-})
-  .then(() => bus.scan())
-  .then((addresses) => {
-    console.info(`Available devices: ${addresses.map(addr => `0x${addr.toString(16)}`)}`);
-  });
+
 const bmp280 = new BMP280(bus);
 
+
 bmp280.init()
-  .then(() => bmp280.readTemperature())
-  .then(console.log)
+  .then(async () => {
+    await bmp280.readTemperature()
+      .then((temperature: number) => {
+        console.log(`Temperature ${formatValue(temperature)} °C`);
+      });
+    await bmp280.readPressure()
+      .then((pressure: number) => {
+        console.log(`Pressure ${formatValue(pressure)} hPa`);
+      });
+  })
   .catch(console.log)
   .then(() => process.exit(0));

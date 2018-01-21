@@ -1,5 +1,9 @@
-export const ID = 0x58;
+// @flow
 
+/** Device ID */
+export const ID: number = 0x58;
+
+/** Device registers */
 export const ADDR = {
   TEMP_XLSB: 0xfc,
   TEMP_LSB: 0xfb,
@@ -24,6 +28,7 @@ export const STATUS_MASK = {
   IM_UPDATE: 0b00000001,
   MEASURING: 0b00001000,
 };
+
 
 export const CTRL_MEAS_MASK = {
   OSRSR_T: 0b11100000,
@@ -61,24 +66,24 @@ export const MODE = {
   NORMAL: 0b00000011,
 };
 
-export const FILTER = [
-  0b000,
-  0b001,
-  0b010,
-  0b011,
-  0b100,
-  0b101,
-  0b110,
-  0b111,
-];
+export const STANDBY = {
+  '500u': 0b00000000,
+  '62m': 0b00100000,
+  '125m': 0b01000000,
+  '250m': 0b01100000,
+  '500m': 0b10000000,
+  '1s': 0b10100000,
+  '2s': 0b11000000,
+  '4s': 0b11100000,
+};
 
-export const STANDBY = [
-  0b000,
-  0b001,
-  0b010,
-  0b011,
-  0b100,
-  0b101,
-  0b110,
-  0b111,
-];
+export const FILTER = {
+  OFF: 0b00000000,
+  '2x': 0b00000100,
+  '4x': 0b00001000,
+  '8x': 0b00001100,
+  '16x': 0b00010000,
+  '32x': 0b00010100,
+  '64x': 0b00011000,
+  '128x': 0b00011100,
+};
