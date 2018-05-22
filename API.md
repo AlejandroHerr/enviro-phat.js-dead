@@ -2,14 +2,14 @@
 
 ### Table of Contents
 
--   [BMP280](#bmp280)
--   [then](#then)
--   [sleep](#sleep)
--   [wait](#wait)
--   [Bus](#bus)
-    -   [close](#close)
--   [Device](#device)
-    -   [read](#read)
+- [BMP280](#bmp280)
+- [then](#then)
+- [sleep](#sleep)
+- [wait](#wait)
+- [Bus](#bus)
+  - [close](#close)
+- [Device](#device)
+  - [read](#read)
 
 ## BMP280
 
@@ -19,8 +19,8 @@ Something
 
 **Parameters**
 
--   `bus` **I2cBus** 
--   `address` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**  (optional, default `0x77`)
+- `bus` **I2cBus** 
+- `address` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**  (optional, default `0x77`)
 
 ## then
 
@@ -30,7 +30,7 @@ Waits time
 
 **Parameters**
 
--   `time` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
+- `time` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;void>** 
 
@@ -40,7 +40,7 @@ Waits time
 
 **Parameters**
 
--   `time` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
+- `time` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;void>** 
 
@@ -50,7 +50,7 @@ i2c Bus
 
 **Parameters**
 
--   `busNumber` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**  (optional, default `1`)
+- `busNumber` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**  (optional, default `1`)
 
 ### close
 
@@ -62,8 +62,8 @@ i2c device base class.
 
 **Parameters**
 
--   `bus` **[Bus](#bus)** 
--   `address` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
+- `bus` **[Bus](#bus)** 
+- `address` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
 
 ### read
 
@@ -71,5 +71,5 @@ Reads
 
 **Parameters**
 
--   `length` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
--   `buffer` **[Buffer](https://nodejs.org/api/buffer.html)** 
+- `length` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
+- `buffer` **[Buffer](https://nodejs.org/api/buffer.html)** 
