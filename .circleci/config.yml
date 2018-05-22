@@ -1,0 +1,124 @@
+
+defaults: &defaults
+  working_directory: ~/enviro-phat.js
+  docker:
+    - image: circleci/node:carbon-stretch
+
+whitelist: &whitelist
+  paths:
+    - .git/
+    - examples/
+    - flow-typed/*
+    - lib/*
+    - node_modules/*
+    - src/*
+    - tests/*
+    - .babelrc
+    - .eslintignore
+    - .eslintrc.js
+    - .flowconfig
+    - .gitignore
+    - API.md
+    - documentation.yml
+    - LICENSE.md
+    - package.json
+    - README.md
+    - release.config.js
+    - yarn.lock
+    
+
+version: 2
+jobs:
+  checkout:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - dependency-cache--{{ checksum "package.json" }}
+          - dependency-cache--
+      - run:
+          name: Install Dependencies
+          command: yarn install
+      - save_cache:
+          paths:
+            - node_modules
+          key: dependency-cache--{{ checksum "package.json" }}
+      - persist_to_workspace:
+          root: ~/enviro-phat.js
+          <<: *whitelist
+  lint:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/enviro-phat.js
+      - run:
+          name: Install Flow-Typed
+          command: yarn flow:install
+      - run:
+          name: Eslint check
+          command: yarn lint
+  test:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/enviro-phat.js
+      - run:
+          name: Tests
+          command: yarn test
+  build:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/enviro-phat.js
+      - run:
+          name: Build
+          command: yarn build
+      - persist_to_workspace:
+          root: ~/enviro-phat.js
+          <<: *whitelist
+  gen_docs:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/enviro-phat.js
+      - run:
+          name: Generate Documentantion
+          command: yarn docs
+      - persist_to_workspace:
+          root: ~/enviro-phat.js
+          <<: *whitelist
+  release:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/enviro-phat.js
+      - run:
+          name: Semantic Release
+          command: yarn semantic-release
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - checkout
+      - lint:
+          requires:
+            - checkout
+      - test:
+          requires:
+            - checkout
+      - build:
+          requires:
+            - checkout
+      - gen_docs:
+          requires:
+            - build
+      - release:
+          requires:
+            - lint
+            - test
+            - build
+            - gen_docs
+          filters:
+            branches:
+              only: master
