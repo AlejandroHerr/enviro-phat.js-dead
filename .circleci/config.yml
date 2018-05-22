@@ -1,28 +1,31 @@
 
 defaults: &defaults
-  working_directory: ~/i2c-bus-promised
+  working_directory: ~/enviro-phat.js
   docker:
-    - image: circleci/node:8.9-stretch
+    - image: circleci/node:carbon-stretch
 
 whitelist: &whitelist
   paths:
-    - .gitignore
-    - coverage/*
+    - .git/
+    - examples/
+    - flow-typed/*
     - lib/*
     - node_modules/*
     - src/*
-    - test/*
-    - flow-typed/*
-    - CODE_OF_CONDUCT.md
-    - LICENSE.md
-    - package.json
-    - README.md
-    - API.md
+    - tests/*
+    - .babelrc
     - .eslintignore
     - .eslintrc.js
     - .flowconfig
-    - rollup.config.js
-    - .babelrc
+    - .gitignore
+    - API.md
+    - documentation.yml
+    - LICENSE.md
+    - package.json
+    - README.md
+    - release.config.js
+    - yarn.lock
+    
 
 version: 2
 jobs:
@@ -42,37 +45,57 @@ jobs:
             - node_modules
           key: dependency-cache--{{ checksum "package.json" }}
       - persist_to_workspace:
-          root: ~/i2c-bus-promised
+          root: ~/enviro-phat.js
           <<: *whitelist
   lint:
     <<: *defaults
     steps:
       - attach_workspace:
-          at: ~/i2c-bus-promised
+          at: ~/enviro-phat.js
       - run:
-          name: Flow-Typed
-          command: yarn flow-typed
+          name: Install Flow-Typed
+          command: yarn flow:install
       - run:
-          name: Eslint
+          name: Eslint check
           command: yarn lint
+  test:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/enviro-phat.js
+      - run:
+          name: Tests
+          command: yarn test
   build:
     <<: *defaults
     steps:
       - attach_workspace:
-          at: ~/i2c-bus-promised
+          at: ~/enviro-phat.js
       - run:
           name: Build
           command: yarn build
       - persist_to_workspace:
-          root: ~/i2c-bus-promised
+          root: ~/enviro-phat.js
           <<: *whitelist
-  publish:
+  gen_docs:
     <<: *defaults
     steps:
       - attach_workspace:
-          at: ~/i2c-bus-promised
-      - { run: { name: 'Write NPM Token to ~/.npmrc', command: 'echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc' } }
-      - { run: { name: 'Publish to NPM', command: 'npm publish --access=public' } }
+          at: ~/enviro-phat.js
+      - run:
+          name: Generate Documentantion
+          command: yarn docs
+      - persist_to_workspace:
+          root: ~/enviro-phat.js
+          <<: *whitelist
+  release:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/enviro-phat.js
+      - run:
+          name: Semantic Release
+          command: yarn semantic-release
 workflows:
   version: 2
   build_and_test:
@@ -81,13 +104,21 @@ workflows:
       - lint:
           requires:
             - checkout
+      - test:
+          requires:
+            - checkout
       - build:
           requires:
             - checkout
-      - publish:
+      - gen_docs:
           requires:
-            - build
+            - checkout
+      - release:
+          requires:
             - lint
+            - test
+            - build
+            - gen_docs
           filters:
             branches:
-              only: publish
+              only: master
